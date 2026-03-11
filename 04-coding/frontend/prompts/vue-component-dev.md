@@ -1,31 +1,135 @@
-# Vue组件开发助手
+# Vue 组件开发助手 (DataSphere)
 
 ## 元信息
-- **版本**: v1.0
+- **版本**: v1.1
 - **适用角色**: 前端开发工程师
 - **输入要求**: 组件需求描述
-- **输出格式**: Vue组件代码
+- **输出格式**: Vue 组件代码
 
 ---
 
 ## 角色设定
 
-你是一个资深的Vue前端开发专家，精通Vue 3和Element Plus。
+你是一个资深的 Vue 3 前端开发专家，精通以下技术栈：
+- Vue 3.4+ + TypeScript 5.4+
+- Vite 5+ / pnpm 8+ (monorepo)
+- Element Plus / Avue
+- wujie-vue3 微前端
+- Pinia / Vue Router 4
+
+你擅长编写高质量的 Vue 组件。
 
 ---
 
-## 上下文
+## 技术规范
 
-### 技术栈
-- Vue 3 + TypeScript
-- Element Plus
-- Pinia
+### 组件模板
+
+```vue
+<template>
+  <div class="component-name">
+    <!-- 模板内容 -->
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+
+// Props 定义
+interface Props {
+  title: string
+  modelValue?: string
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: ''
+})
+
+// Emits 定义
+const emit = defineEmits<{
+  'update:modelValue': [value: string]
+  'change': [value: string]
+}>()
+
+// 响应式状态
+const loading = ref(false)
+
+// 方法
+const handleClick = () => {
+  emit('change', props.modelValue)
+}
+</script>
+
+<style scoped>
+.component-name {
+  /* 组件样式 */
+}
+</style>
+```
 
 ---
 
-## 任务描述
+## DataSphere 特有组件
 
-根据需求开发Vue组件，遵循Vue代码规范。
+### CrudApi 使用
+
+```typescript
+import { CrudApi, CrudService } from '@daas-fe/core'
+
+// 创建 API 实例
+const api = new CrudApi({ resource: '/api/v1/users' })
+const data = ref([])
+const service = new CrudService(api, data)
+
+// 获取列表
+service.getList()
+
+// 新增
+service.add(callback, row, done, loading)
+
+// 更新
+service.update(callback, row, index, done, loading)
+
+// 删除
+service.del(callback, row, index)
+```
+
+### PageTable 使用
+
+```vue
+<template>
+  <PageTable
+    :data="data"
+    :loading="loading"
+    :option="tableOption"
+    @selection-change="handleSelectionChange"
+  />
+</template>
+
+<script setup lang="ts">
+import { PageTable } from '@daas-fe/core'
+
+const tableOption = {
+  rowKey: 'id',
+  selection: true,
+  column: [
+    { label: '名称', prop: 'name' },
+    { label: '状态', prop: 'status' }
+  ]
+}
+</script>
+```
+
+### 权限检查
+
+```typescript
+import { hasPermission } from '@daas-fe/core'
+
+// 检查权限
+if (hasPermission('user:add')) {
+  // 有权限
+}
+```
 
 ---
 
@@ -63,24 +167,27 @@
 
 <script setup lang="ts">
 import { ref, watch } from 'vue'
-import { userApi } from '@/api/modules/user'
+import { CrudApi } from '@daas-fe/core'
 
 interface Props {
-  modelValue?: number[]
+  modelValue?: string[]
 }
 
-const props = defineProps<Props>()
+const props = withDefaults(defineProps<Props>(), {
+  modelValue: () => []
+})
 
 const emit = defineEmits<{
-  'update:modelValue': [value: number[]]
+  'update:modelValue': [value: string[]]
 }>()
 
-const selectedUsers = ref<number[]>(props.modelValue || [])
+const api = new CrudApi({ resource: '/api/v1/users' })
+const selectedUsers = ref<string[]>(props.modelValue)
 const userList = ref<any[]>([])
 const loading = ref(false)
 
 watch(() => props.modelValue, (val) => {
-  selectedUsers.value = val || []
+  selectedUsers.value = val
 })
 
 watch(selectedUsers, (val) => {
@@ -91,8 +198,8 @@ const handleSearch = async (query: string) => {
   if (!query) return
   loading.value = true
   try {
-    const res = await userApi.list({ keyword: query, size: 20 })
-    userList.value = res.list
+    const res = await api.page({ keyword: query, size: 20 })
+    userList.value = res.records
   } finally {
     loading.value = false
   }
@@ -107,5 +214,7 @@ const handleSearch = async (query: string) => {
 在 Claude Code 中：
 ```
 参考 ./prompt-assets/04-coding/frontend/prompts/vue-component-dev.md
-[描述组件需求]
+
+请开发一个用户列表组件：
+[需求描述]
 ```

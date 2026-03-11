@@ -2,10 +2,17 @@
 
 ## 概述
 
-本资产库提供一套可复用、可版本管理、可演进的企业应用开发prompt资产，覆盖产品研发全生命周期。
+本资产库提供一套可复用、可版本管理、可演进的企业应用开发 prompt 资产，覆盖产品研发全生命周期。
 
 ## 技术栈
 
+### DataSphere 项目技术栈
+- **后端**: Java 21 + Spring Boot 3.5.11 + MyBatis-Plus 3.5.x
+- **前端**: Vue 3.4+ + TypeScript 5.4+ + Vite 5+ + wujie-vue3
+- **数据库**: MySQL 8.0+
+- **部署**: Docker + Kubernetes
+
+### 通用技术栈
 - **后端**: Java + Spring Cloud
 - **前端**: Vue
 - **部署**: Docker + Kubernetes
@@ -14,68 +21,83 @@
 
 ```
 prompt-assets/
-├── 01-requirements/          # 产品需求阶段
-├── 02-design/               # 设计阶段
-├── 03-architecture/         # 技术架构阶段
-├── 04-coding/               # 编码阶段
-│   ├── backend/             # 后端编码
-│   └── frontend/            # 前端编码
-├── 05-testing/              # 测试阶段
-├── 06-deployment/           # 部署阶段
-├── 07-operations/           # 运维阶段
-├── 08-workflow/             # 敏捷工作流
-├── 09-security/             # 安全规范
-├── common/                  # 通用资产
-└── tools/                   # 辅助工具
+├── skills/                    # Skills 技能定义
+│   ├── commit.md              # Git 提交规范
+│   ├── review.md              # 代码审查规范
+│   ├── refactor.md            # 重构指南
+│   └── migrate.md             # 迁移指南
+│
+├── 01-requirements/           # 产品需求阶段
+├── 02-design/                 # 设计阶段
+├── 03-architecture/           # 技术架构阶段
+├── 04-coding/                 # 编码阶段
+│   ├── backend/prompts/       # 后端编码 prompts
+│   └── frontend/prompts/      # 前端编码 prompts
+├── 05-testing/                # 测试阶段
+├── 06-deployment/             # 部署阶段
+├── 07-operations/             # 运维阶段
+├── 08-workflow/               # 敏捷工作流
+├── 09-security/               # 安全规范
+├── common/                    # 通用资产
+└── tools/                     # 辅助工具
 ```
+
+## Skills 技能索引
+
+| 技能 | 用途 | 文档位置 |
+|------|------|----------|
+| commit | Git 提交规范 | [skills/commit.md](skills/commit.md) |
+| review | 代码审查规范 | [skills/review.md](skills/review.md) |
+| refactor | 重构指南 | [skills/refactor.md](skills/refactor.md) |
+| migrate | 迁移指南 | [skills/migrate.md](skills/migrate.md) |
 
 ## 快速开始
 
-### 1. 与 Claude Code 集成
+### 1. 使用 Skills
 
-在项目根目录创建 `.claude/CLAUDE.md`：
-
-```markdown
-# 项目Prompt资产引用
-
-## 技术栈上下文
-当前项目使用：Java + Spring Cloud 后端, Vue 前端, Docker + K8s 部署
-
-## Prompt资产路径
-- 需求分析: ./prompt-assets/01-requirements/prompts/
-- 架构设计: ./prompt-assets/03-architecture/prompts/
-- 后端开发: ./prompt-assets/04-coding/backend/prompts/
-- 前端开发: ./prompt-assets/04-coding/frontend/prompts/
-- 测试: ./prompt-assets/05-testing/prompts/
-- 部署: ./prompt-assets/06-deployment/prompts/
-- 运维: ./prompt-assets/07-operations/prompts/
-```
-
-### 2. 使用方式
-
-在 Claude Code 对话中引用：
+在 Claude Code 中引用 skills：
 
 ```
-参考 ./prompt-assets/04-coding/backend/prompts/code-generation.md，为订单模块生成CRUD代码
+参考 ./prompt-assets/skills/commit.md
+
+请为以下变更生成提交消息：
+添加了质量规则测试接口
+```
+
+### 2. 使用 Prompts
+
+```
+参考 ./prompt-assets/04-coding/backend/prompts/code-generation.md
+
+为订单模块生成 CRUD 代码
+```
+
+### 3. 项目上下文
+
+```
+参考 ./prompt-assets/projects/datasphere/project-context.md
+
+了解项目结构和技术栈
 ```
 
 ## 各阶段资产说明
 
-| 阶段 | 目录 | 核心Prompt |
-|------|------|------------|
+| 阶段 | 目录 | 核心资产 |
+|------|------|----------|
+| Skills | skills | commit, review, refactor, migrate |
 | 需求 | 01-requirements | 需求分析、用户故事生成、优先级评估 |
 | 设计 | 02-design | UI组件设计、API接口设计、数据库建模 |
 | 架构 | 03-architecture | Spring Cloud架构、Vue架构、微服务拆分 |
 | 编码 | 04-coding | 代码生成、代码审查、重构建议 |
-| 测试 | 05-testing | 测试用例生成、集成测试、E2E测试 |
-| 部署 | 06-deployment | Docker镜像构建、K8s部署设计、GitOps |
+| 测试 | 05-testing | 测试用例生成、集成测试 |
+| 部署 | 06-deployment | Docker镜像构建、K8s部署设计 |
 | 运维 | 07-operations | 日志分析、性能监控、故障排查 |
-| 工作流 | 08-workflow | 故事点估算、迭代待办、速率分析 |
-| 安全 | 09-security | 代码安全审计、API安全审查、依赖扫描 |
+| 工作流 | 08-workflow | 故事点估算、迭代待办 |
+| 安全 | 09-security | 代码安全审计、API安全审查 |
 
 ## Prompt 设计规范
 
-每个Prompt遵循统一结构：
+每个 Prompt 遵循统一结构：
 
 ```markdown
 # [Prompt名称]
@@ -95,10 +117,6 @@ prompt-assets/
 ## 输出要求
 1. [输出格式要求]
 2. [质量标准]
-3. [交付物清单]
-
-## 示例
-[输入输出示例]
 ```
 
 ## 版本管理
